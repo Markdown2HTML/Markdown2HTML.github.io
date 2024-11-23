@@ -381,81 +381,81 @@
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
- .replace(/'/g, """);
+                .replace(/'/g, "&#039;");
         }
 
         // 초기 렌더러 설정
- 스타일 적용(렌더러);
+        applyStyles(renderer);
 
-        // Mark.js 설정
- marked.setOptions({
- 렌더러: 렌더러,
- 휴식 시간: 사실,
- gfm: 사실입니다,
- 헤더 ID: 거짓
- });
+        // Marked.js 설정
+        marked.setOptions({
+            renderer: renderer,
+            breaks: true,
+            gfm: true,
+            headerIds: false
+        });
 
- const markdownInput = document.getElementById('markdown');
- const outputDiv = document.getElementById('output');
- constuseInlineStylesCheckbox = document.getElementById('인라인스타일 사용');
+        const markdownInput = document.getElementById('markdown');
+        const outputDiv = document.getElementById('output');
+        const useInlineStylesCheckbox = document.getElementById('useInlineStyles');
 
         // 마크다운 입력 시 실시간으로 HTML로 변환
- markdownInput.addEventListener('input'), 업데이트출력);
+        markdownInput.addEventListener('input', updateOutput);
 
         // 체크박스 변경 시 렌더러 업데이트
- inlineStylesCheckbox.addEventListener('change', 함수() {
- 인라인스타일 = this.checked 사용;
+        useInlineStylesCheckbox.addEventListener('change', function() {
+            useInlineStyles = this.checked;
             // 새로운 렌더러 생성
- 렌더러 = 새로 표시되었습니다.렌더러();
- 스타일 적용(렌더러);
+            renderer = new marked.Renderer();
+            applyStyles(renderer);
             // Marked.js 옵션 업데이트
- marked.setOptions({
- 렌더러: 렌더러,
- 휴식 시간: 사실,
- gfm: 사실입니다,
- 헤더 ID: 거짓
- });
- 업데이트출력();
- });
+            marked.setOptions({
+                renderer: renderer,
+                breaks: true,
+                gfm: true,
+                headerIds: false
+            });
+            updateOutput();
+        });
 
-        기능. 출력 업데이트() {
- 구성 마크다운텍스트 = markdownInput.value;
- 구성 html = marked.parse(마크다운텍스트);
- 출력Div.innerHTML = html;
+        function updateOutput() {
+            const markdownText = markdownInput.value;
+            const html = marked.parse(markdownText);
+            outputDiv.innerHTML = html;
         }
 
         // 초기 출력 업데이트
- 업데이트출력();
+        updateOutput();
 
         // 기존 HTML 복사 함수 (스타일 제외)
-        기능. 복사HTML() {
- 설정 온도텍스트 영역 = document.createElement('텍스트 영역');
- tempTextarea.value = outputDiv.innerHTML;
- document.body.appendChild(템프텍스트 영역);
- tempText 영역.() 선택;
- document.execCommand('copy');
- document.body.removeChild(템프텍스트 영역);
- alert(t.copyAlert);
+        function copyHTML() {
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = outputDiv.innerHTML;
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextarea);
+            alert(t.copyAlert);
         }
 
         // 새로운 스타일 포함 HTML 복사 함수
-        기능. 카피스타일HTML() {
- if (!navigator.clipboard ||!window.클립보드 항목) {
- alert(t.copyStyleFailAlert);
- 반환;
+        function copyStyledHTML() {
+            if (!navigator.clipboard || !window.ClipboardItem) {
+                alert(t.copyStyledFailAlert);
+                return;
             }
 
- const htmlContent = outputDiv.innerHTML; // 영역의 HTML 가져오기 출력
- 구성 블롭 = 새로운 블롭([htmlContent], {type: '텍스트/html'});
- 구성 데이터 = [새 클립보드 항목({'텍스트/html': 블롭 });
+            const htmlContent = outputDiv.innerHTML; // output 영역의 HTML 가져오기
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const data = [new ClipboardItem({ 'text/html': blob })];
 
- 내비게이터.clipboard.쓰기(데이터).그런 다음 (() => {
- alert(t.copyStyleAlert);
- }).catch(err => {
- console.error ('복사 실패: 'err);
- alert(t.copyStyleFailAlert);
- });
+            navigator.clipboard.write(data).then(() => {
+                alert(t.copyStyledAlert);
+            }).catch(err => {
+                console.error('복사 실패: ', err);
+                alert(t.copyStyledFailAlert);
+            });
         }
- </script>
-</바디>
+    </script>
+</body>
 </html>
