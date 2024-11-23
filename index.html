@@ -86,7 +86,6 @@
             height: 100%; /* 부모 컨테이너의 높이에 맞춤 */
             box-sizing: border-box;
         }
-
         .options {
             display: flex;
             justify-content: space-between;
@@ -146,7 +145,10 @@
                 <input type="checkbox" id="useInlineStyles" checked>
                 <label for="useInlineStyles" id="useInlineStylesLabel">Use inline styles</label>
             </div>
-            <button id="copyButton" onclick="copyHTML()">Copy HTML</button>
+            <div>
+                <button id="copyStyledButton" onclick="copyStyledHTML()">Copy Content</button>
+                <button id="copyButton" onclick="copyHTML()">Copy HTML</button>
+            </div>
         </div>
     </main>
     <footer id="footer">
@@ -157,44 +159,60 @@
         // 번역 데이터
         const translations = {
             en: {
-                title: "Markdown to HTML Converter with Inline Styles",
+                title: "Markdown to HTML Converter",
                 headerTitle: "Markdown to HTML Converter",
                 headerSubtitle: "Enter Markdown and convert it to HTML",
                 textareaPlaceholder: "Enter your Markdown...",
                 useInlineStylesLabel: "Use inline styles",
                 copyButton: "Copy HTML",
+                copyStyledButton: "Copy Content",
                 footer: "© 2024 Markdown Converter. All rights reserved.",
                 copyAlert: "HTML has been copied!",
+                copyStyledAlert: "HTML with styles has been copied!",
+                copyFailAlert: "Failed to copy HTML.",
+                copyStyledFailAlert: "Failed to copy styled HTML."
             },
             ko: {
-                title: "인라인 스타일을 사용한 Markdown to HTML 변환기",
+                title: "Markdown to HTML 변환기",
                 headerTitle: "Markdown to HTML 변환기",
                 headerSubtitle: "마크다운을 입력하고 HTML로 변환하세요",
                 textareaPlaceholder: "마크다운을 입력하세요...",
                 useInlineStylesLabel: "인라인 스타일 사용",
                 copyButton: "HTML 복사하기",
+                copyStyledButton: "콘텐츠 복사",
                 footer: "© 2024 Markdown Converter. All rights reserved.",
                 copyAlert: "HTML이 복사되었습니다!",
+                copyStyledAlert: "스타일이 포함된 HTML이 복사되었습니다!",
+                copyFailAlert: "HTML 복사에 실패했습니다.",
+                copyStyledFailAlert: "스타일이 포함된 HTML 복사에 실패했습니다."
             },
             ja: {
-                title: "インラインスタイルを使用したMarkdownからHTMLへのコンバーター",
+                title: "Markdown to HTML 変換器",
                 headerTitle: "MarkdownからHTMLへのコンバーター",
                 headerSubtitle: "Markdownを入力してHTMLに変換してください",
                 textareaPlaceholder: "Markdownを入力してください...",
                 useInlineStylesLabel: "インラインスタイルを使用",
                 copyButton: "HTMLをコピー",
+                copyStyledButton: "コンテンツをコピー",
                 footer: "© 2024 Markdown Converter. All rights reserved.",
                 copyAlert: "HTMLがコピーされました！",
+                copyStyledAlert: "スタイルを含むHTMLがコピーされました！",
+                copyFailAlert: "HTMLのコピーに失敗しました。",
+                copyStyledFailAlert: "スタイルを含むHTMLのコピーに失敗しました。"
             },
             zh: {
-                title: "使用内联样式的Markdown到HTML转换器",
+                title: "Markdown to HTML 转换器",
                 headerTitle: "Markdown到HTML转换器",
                 headerSubtitle: "输入Markdown并将其转换为HTML",
                 textareaPlaceholder: "请输入您的Markdown...",
                 useInlineStylesLabel: "使用内联样式",
                 copyButton: "复制HTML",
+                copyStyledButton: "复制内容",
                 footer: "© 2024 Markdown Converter. All rights reserved.",
                 copyAlert: "HTML已复制！",
+                copyStyledAlert: "带样式的HTML已复制！",
+                copyFailAlert: "HTML复制失败。",
+                copyStyledFailAlert: "带样式的HTML复制失败。"
             }
         };
 
@@ -234,6 +252,7 @@
 
             // 버튼
             document.getElementById('copyButton').innerText = t.copyButton;
+            document.getElementById('copyStyledButton').innerText = t.copyStyledButton;
 
             // 푸터
             document.getElementById('footer').innerHTML = t.footer;
@@ -362,63 +381,81 @@
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+ .replace(/'/g, """);
         }
 
         // 초기 렌더러 설정
-        applyStyles(renderer);
+ 스타일 적용(렌더러);
 
-        // Marked.js 설정
-        marked.setOptions({
-            renderer: renderer,
-            breaks: true,
-            gfm: true,
-            headerIds: false
-        });
+        // Mark.js 설정
+ marked.setOptions({
+ 렌더러: 렌더러,
+ 휴식 시간: 사실,
+ gfm: 사실입니다,
+ 헤더 ID: 거짓
+ });
 
-        const markdownInput = document.getElementById('markdown');
-        const outputDiv = document.getElementById('output');
-        const useInlineStylesCheckbox = document.getElementById('useInlineStyles');
+ const markdownInput = document.getElementById('markdown');
+ const outputDiv = document.getElementById('output');
+ constuseInlineStylesCheckbox = document.getElementById('인라인스타일 사용');
 
         // 마크다운 입력 시 실시간으로 HTML로 변환
-        markdownInput.addEventListener('input', updateOutput);
+ markdownInput.addEventListener('input'), 업데이트출력);
 
         // 체크박스 변경 시 렌더러 업데이트
-        useInlineStylesCheckbox.addEventListener('change', function() {
-            useInlineStyles = this.checked;
+ inlineStylesCheckbox.addEventListener('change', 함수() {
+ 인라인스타일 = this.checked 사용;
             // 새로운 렌더러 생성
-            renderer = new marked.Renderer();
-            applyStyles(renderer);
+ 렌더러 = 새로 표시되었습니다.렌더러();
+ 스타일 적용(렌더러);
             // Marked.js 옵션 업데이트
-            marked.setOptions({
-                renderer: renderer,
-                breaks: true,
-                gfm: true,
-                headerIds: false
-            });
-            updateOutput();
-        });
+ marked.setOptions({
+ 렌더러: 렌더러,
+ 휴식 시간: 사실,
+ gfm: 사실입니다,
+ 헤더 ID: 거짓
+ });
+ 업데이트출력();
+ });
 
-        function updateOutput() {
-            const markdownText = markdownInput.value;
-            const html = marked.parse(markdownText);
-            outputDiv.innerHTML = html;
+        기능. 출력 업데이트() {
+ 구성 마크다운텍스트 = markdownInput.value;
+ 구성 html = marked.parse(마크다운텍스트);
+ 출력Div.innerHTML = html;
         }
 
         // 초기 출력 업데이트
-        updateOutput();
+ 업데이트출력();
 
-        // 변환된 HTML을 클립보드에 복사
-        function copyHTML() {
-            const tempTextarea = document.createElement('textarea');
-            tempTextarea.value = outputDiv.innerHTML;
-            document.body.appendChild(tempTextarea);
-            tempTextarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempTextarea);
-            alert(t.copyAlert);
+        // 기존 HTML 복사 함수 (스타일 제외)
+        기능. 복사HTML() {
+ 설정 온도텍스트 영역 = document.createElement('텍스트 영역');
+ tempTextarea.value = outputDiv.innerHTML;
+ document.body.appendChild(템프텍스트 영역);
+ tempText 영역.() 선택;
+ document.execCommand('copy');
+ document.body.removeChild(템프텍스트 영역);
+ alert(t.copyAlert);
         }
 
-    </script>
-</body>
+        // 새로운 스타일 포함 HTML 복사 함수
+        기능. 카피스타일HTML() {
+ if (!navigator.clipboard ||!window.클립보드 항목) {
+ alert(t.copyStyleFailAlert);
+ 반환;
+            }
+
+ const htmlContent = outputDiv.innerHTML; // 영역의 HTML 가져오기 출력
+ 구성 블롭 = 새로운 블롭([htmlContent], {type: '텍스트/html'});
+ 구성 데이터 = [새 클립보드 항목({'텍스트/html': 블롭 });
+
+ 내비게이터.clipboard.쓰기(데이터).그런 다음 (() => {
+ alert(t.copyStyleAlert);
+ }).catch(err => {
+ console.error ('복사 실패: 'err);
+ alert(t.copyStyleFailAlert);
+ });
+        }
+ </script>
+</바디>
 </html>
