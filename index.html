@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title id="pageTitle">Markdown to HTML Converter with Inline Styles</title>
     
+    <!-- Highlight.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+    
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -101,6 +104,7 @@
             background-color: #28a745;
             color: white;
             transition: background-color 0.3s ease;
+            margin-left: 5px;
         }
         button:hover {
             background-color: #218838;
@@ -129,6 +133,8 @@
     <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
     <!-- jQuery 라이브러리 불러오기 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Highlight.js JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 </head>
 <body>
     <header>
@@ -256,6 +262,9 @@
 
             // 푸터
             document.getElementById('footer').innerHTML = t.footer;
+
+            // Highlight.js 초기화
+            hljs.highlightAll();
         });
 
         // 커스텀 렌더러 생성
@@ -332,13 +341,28 @@
                 return `<li style="margin: 8px 0;">${text}</li>`;
             };
 
-            // 코드 블록 스타일
+            // 코드 블록 스타일 (Highlight.js 통합)
             renderer.code = function(code, infostring, escaped) {
-                const language = infostring ? infostring : '';
-                if (!useInlineStyles) {
-                    return `<pre><code>${escapeHtml(code)}</code></pre>`;
+                const language = (infostring || '').match(/\S*/)[0];
+                if (useInlineStyles) {
+                    if (language && hljs.getLanguage(language)) {
+                        const highlighted = hljs.highlight(code, { language }).value;
+                        return `<pre style="background-color: #f6f8fa; padding: 10px; border-radius: 4px; overflow: auto; margin: 16px 0;"><code style="font-family: Consolas, 'Courier New', monospace; font-size: 14px; color: #24292e; background-color: unset;" class="hljs ${language}">${highlighted}</code></pre>`;
+                    } else {
+                        // 언어가 지정되지 않았거나 지원되지 않는 경우 기본 처리
+                        const highlighted = hljs.highlightAuto(code).value;
+                        return `<pre style="background-color: #f6f8fa; padding: 10px; border-radius: 4px; overflow: auto; margin: 16px 0;"><code style="font-family: Consolas, 'Courier New', monospace; font-size: 14px; color: #24292e; background-color: unset;" class="hljs">${highlighted}</code></pre>`;
+                    }
+                } else {
+                    if (language && hljs.getLanguage(language)) {
+                        const highlighted = hljs.highlight(code, { language }).value;
+                        return `<pre><code class="hljs ${language}">${highlighted}</code></pre>`;
+                    } else {
+                        // 언어가 지정되지 않았거나 지원되지 않는 경우 기본 처리
+                        const highlighted = hljs.highlightAuto(code).value;
+                        return `<pre><code class="hljs">${highlighted}</code></pre>`;
+                    }
                 }
-                return `<pre style="background-color: #f6f8fa; padding: 10px; border-radius: 4px; overflow: auto; margin: 16px 0;"><code style="font-family: Consolas, 'Courier New', monospace; font-size: 14px; color: #24292e; background-color: unset; display: block;">${escapeHtml(code)}</code></pre>`;
             };
 
             // 블록 인용 스타일
@@ -422,6 +446,8 @@
             const markdownText = markdownInput.value;
             const html = marked.parse(markdownText);
             outputDiv.innerHTML = html;
+            // Highlight.js 하이라이팅 다시 적용
+            hljs.highlightAll();
         }
 
         // 초기 출력 업데이트
