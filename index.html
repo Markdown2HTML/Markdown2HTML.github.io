@@ -267,9 +267,6 @@
             hljs.highlightAll();
         });
 
-        // 커스텀 렌더러 생성
-        let renderer = new marked.Renderer();
-
         // Highlight.js 클래스에 대한 인라인 스타일 매핑
         const highlightStyleMap = {
             'hljs-comment': 'color: #6a737d; font-style: italic;',
@@ -293,6 +290,9 @@
             'hljs-strong': 'font-weight: bold;',
             // 필요한 경우 추가 클래스를 여기에 추가하세요.
         };
+
+        // 커스텀 렌더러 생성
+        let renderer = new marked.Renderer();
 
         // 현재 스타일 사용 여부
         let useInlineStyles = document.getElementById('useInlineStyles').checked;
@@ -478,25 +478,7 @@
             outputDiv.innerHTML = html;
             // Highlight.js 하이라이팅 다시 적용
             if (useInlineStyles) {
-                suppressHighlightWarnings(() => {
-                    hljs.highlightAll();
-                });
-            }
-        }
-
-        // Highlight.js 경고 메시지 억제 함수
-        function suppressHighlightWarnings(callback) {
-            const originalConsoleWarn = console.warn;
-            console.warn = function(message) {
-                // Highlight.js 관련 경고만 억제
-                if (!message.includes('Unknown language') && !message.includes('Could not detect')) {
-                    originalConsoleWarn.apply(console, arguments);
-                }
-            };
-            try {
-                callback();
-            } finally {
-                console.warn = originalConsoleWarn;
+                hljs.highlightAll();
             }
         }
 
